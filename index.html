@@ -1,0 +1,283 @@
+<!DOCTYPE html> <!-- Declaração padrão do tipo de documento HTML5 -->
+<html lang="pt-BR"> <!-- Define o idioma principal da página como Português do Brasil -->
+<head>
+    <!-- Título da Página (aparece na aba do navegador) -->
+    <title>Garagem Inteligente v8 - Magnífico!</title>
+
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8"> <!-- Define a codificação de caracteres para UTF-8 (suporta acentos, etc.) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura a viewport para design responsivo -->
+
+    <!-- Links de Estilos Externos -->
+    <!-- Font Awesome: Biblioteca de ícones utilizada na interface -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- CSS Principal: Arquivo com os estilos customizados da aplicação -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Estilos Inline (geralmente para regras específicas ou controladas por JS) -->
+    <style>
+        /* Esconde o container de capacidade de carga por padrão (JS controla a visibilidade) */
+        #add-capacidade-carga-container { display: none; }
+    </style>
+</head>
+<body>
+<!-- Container Principal: Engloba todo o conteúdo visível da aplicação -->
+<div id="container">
+
+    <!-- Título Principal da Aplicação -->
+    <h1><i class="fa-solid fa-warehouse"></i> Garagem Inteligente v8</h1>
+
+    <!-- Navegação por Abas: Permite alternar entre as seções principais -->
+    <nav id="abas-navegacao">
+        <!-- Botão para a aba "Ver Garagem", inicialmente ativa -->
+        <button id="tab-garagem" class="aba-ativa"><i class="fa-solid fa-car-side"></i> Ver Garagem</button>
+        <!-- Botão para a aba "Adicionar Veículo" -->
+        <button id="tab-adicionar"><i class="fa-solid fa-plus-circle"></i> Adicionar Veículo</button>
+    </nav>
+
+    <!-- Áreas de Alerta: Containers que serão preenchidos dinamicamente por JavaScript -->
+    <div id="cnh-alertas-area">
+        <!-- Exemplo de como o JS pode preencher: <h4><i class="fa-solid fa-id-card-clip"></i> Alertas de CNH</h4> ... -->
+    </div>
+    <div id="notificacoes-area">
+        <!-- Exemplo de como o JS pode preencher: <h4><i class="fa-solid fa-triangle-exclamation"></i> Notificações Pendentes</h4> ... -->
+    </div>
+
+    <!-- ========================== -->
+    <!-- === SEÇÃO VER GARAGEM === -->
+    <!-- ========================== -->
+    <!-- Container da seção "Ver Garagem", controlada pelo botão #tab-garagem -->
+    <section id="secao-garagem" class="secao-principal ativa" aria-labelledby="tab-garagem">
+        <!-- Título da Seção -->
+        <h2><i class="fa-solid fa-car-on"></i> Minha Frota</h2>
+
+        <!-- Menu de Veículos: Exibe botões para selecionar cada veículo cadastrado -->
+        <div id="menu-veiculos">
+            <!-- Placeholder inicial enquanto os veículos são carregados -->
+            <span class="loading-placeholder">Consultando banco de dados... <i class="fa-solid fa-spinner fa-spin"></i></span>
+            <!-- JavaScript irá popular esta área com botões -->
+            <!-- Exemplo de placeholder para garagem vazia: <span class="empty-placeholder">Sua garagem está vazia <i class="fa-regular fa-face-sad-tear"></i></span> -->
+        </div>
+
+        <!-- Área de Exibição do Veículo: Mostra os detalhes do veículo selecionado -->
+        <div id="veiculo-display-area">
+            <!-- Placeholder exibido quando nenhum veículo está selecionado -->
+            <div class="placeholder">
+                <i class="fa-solid fa-hand-pointer"></i>
+                Selecione um veículo no menu acima para visualizar seus detalhes e controles.
+            </div>
+            <!-- JavaScript irá renderizar o conteúdo do template #veiculo-template aqui -->
+        </div>
+
+        <!-- Seção de Agendamentos Futuros (Visão Geral) -->
+        <section id="agendamentos-futuros" class="glass-card" aria-label="Próximos Agendamentos">
+            <!-- Título da sub-seção -->
+            <h3><i class="fa-solid fa-calendar-check"></i> Próximos Agendamentos (Todos)</h3>
+            <!-- Lista onde os agendamentos futuros de TODOS os veículos serão exibidos -->
+            <div id="agendamentos-futuros-lista">
+                 <!-- Placeholder inicial -->
+                 <p>Verificando agenda... <i class="fa-solid fa-spinner fa-spin"></i></p>
+                 <!-- JavaScript irá popular esta lista -->
+            </div>
+        </section>
+    </section> <!-- Fim da #secao-garagem -->
+
+    <!-- =============================== -->
+    <!-- === SEÇÃO ADICIONAR VEÍCULO === -->
+    <!-- =============================== -->
+    <!-- Container da seção "Adicionar Veículo", controlada pelo botão #tab-adicionar -->
+    <section id="secao-adicionar" class="secao-principal" aria-labelledby="tab-adicionar">
+        <!-- Container interno da seção (já com estilo glass-card via CSS) -->
+        <div id="add-veiculo-section">
+            <!-- Título da Seção -->
+            <h2><i class="fa-solid fa-circle-plus"></i> Registrar Novo Veículo</h2>
+            <!-- Formulário para adicionar um novo veículo -->
+            <form id="form-add-veiculo">
+                <!-- Grid para organizar os campos do formulário -->
+                <div class="form-grid">
+                    <!-- Campo Modelo (Texto, Obrigatório) -->
+                    <div>
+                        <label for="add-modelo">Modelo:*</label>
+                        <input type="text" id="add-modelo" required placeholder="Ex: Maverick GT V8">
+                    </div>
+                    <!-- Campo Cor (Texto) -->
+                    <div>
+                        <label for="add-cor">Cor:</label>
+                        <input type="text" id="add-cor" placeholder="Ex: Laranja Califórnia">
+                    </div>
+                    <!-- Campo Placa (Texto, com padrão de validação) -->
+                    <div>
+                        <label for="add-placa">Placa:</label>
+                        <input type="text" id="add-placa" placeholder="Ex: BRA2E19" pattern="[A-Za-z]{3}[0-9][A-Za-z0-9][0-9]{2}|[A-Za-z]{3}[0-9]{4}" title="Formato antigo (AAA1234) ou Mercosul (AAA1B23)">
+                    </div>
+                    <!-- Campo Ano (Número, com limites) -->
+                    <div>
+                        <label for="add-ano">Ano:</label>
+                        <input type="number" id="add-ano" placeholder="Ex: 1974" min="1900" max="2100">
+                    </div>
+                    <!-- Campo Tipo (Seleção, Obrigatório) -->
+                    <div>
+                        <label for="add-tipo">Tipo:*</label>
+                        <select id="add-tipo" required>
+                            <option value="" disabled selected>-- Selecione o Tipo --</option>
+                            <option value="CarroBase">Carro Comum</option>
+                            <option value="CarroEsportivo">Esportivo</option>
+                            <option value="Caminhao">Caminhão</option>
+                        </select>
+                    </div>
+                    <!-- Campo Capacidade de Carga (Número, específico para Caminhão, controlado por JS) -->
+                    <div id="add-capacidade-carga-container">
+                        <label for="add-capacidade-carga">Capacidade Carga (kg):</label>
+                        <input type="number" id="add-capacidade-carga" min="0" placeholder="Ex: 15000">
+                    </div>
+                    <!-- Campo Vencimento CNH (Data) -->
+                    <div>
+                        <label for="add-cnh">Vencimento CNH Associada:</label>
+                        <input type="date" id="add-cnh">
+                    </div>
+                </div> <!-- Fim do .form-grid -->
+
+                <!-- Campo de Upload de Imagem -->
+                <div>
+                    <label for="add-imagem-input">Imagem (Opcional):</label>
+                    <!-- Input do tipo 'file' para seleção de imagem -->
+                    <input type="file" id="add-imagem-input" accept="image/*">
+                    <!-- Container para a pré-visualização da imagem selecionada -->
+                    <div class="imagem-preview-container">
+                        <!-- Tag <img> onde a prévia será exibida (controlada por JS) -->
+                        <img class="imagem-preview" id="add-imagem-preview" src="#" alt="Prévia da imagem a adicionar">
+                        <!-- Texto informativo -->
+                        <small>Prévia da imagem selecionada.</small>
+                        <!-- Aviso sobre tamanho de imagem -->
+                        <small class="warning-text"><i class="fa-solid fa-triangle-exclamation"></i> Imagens muito grandes podem causar lentidão ou falha.</small>
+                    </div>
+                </div>
+
+                <!-- Botão de Submissão do Formulário -->
+                <button type="submit" id="adicionar-veiculo-btn"><i class="fa-solid fa-floppy-disk"></i> Adicionar à Garagem</button>
+            </form> <!-- Fim do #form-add-veiculo -->
+        </div> <!-- Fim do #add-veiculo-section -->
+    </section> <!-- Fim da #secao-adicionar -->
+
+</div> <!-- Fim do #container -->
+
+<!-- ================================= -->
+<!-- === Elementos de Áudio (Som) === -->
+<!-- ================================= -->
+<!-- Tags de áudio para efeitos sonoros, pré-carregadas para melhor performance -->
+<!-- <audio id="som-ligar" src="som_carro_ligando.mp3" preload="auto"></audio>
+<audio id="som-buzinar" src="buzina.mp3" preload="auto"></audio>
+<audio id="som-acelerar" src="aceleracao.mp3" preload="auto"></audio>
+<audio id="som-frear" src="frear.mp3" preload="auto"></audio>
+<audio id="som-desligar" src="desligar.mp3" preload="auto"></audio> -->
+
+<!-- ============================================== -->
+<!-- === Template para Renderização de Veículo === -->
+<!-- ============================================== -->
+<!-- Template HTML: Define a estrutura reutilizável para exibir os detalhes de um veículo.
+     Não é exibido diretamente na página, mas usado pelo JavaScript para criar
+     o conteúdo dinâmico dentro de #veiculo-display-area. -->
+<template id="veiculo-template">
+    <!-- Container principal do veículo renderizado -->
+    <div class="veiculo-renderizado" data-template-id> <!-- data-template-id pode ser usado pelo JS -->
+
+        <!-- Coluna da Esquerda: Contém imagem, informações básicas e formulário de edição -->
+        <div class="coluna-imagem-info">
+            <!-- Título com o nome/modelo do veículo -->
+            <h2 class="veiculo-titulo">Nome Veículo</h2>
+
+            <!-- Card de Informações Básicas (Imagem, Status, Velocidade, etc.) -->
+            <div class="card-info-basica glass-card">
+                <!-- Imagem do veículo -->
+                <img class="veiculo-imagem" src="default_car.png" alt="Imagem do Veículo">
+                <!-- Bloco com informações textuais e visuais do veículo -->
+                <div class="informacoes-veiculo">
+                    <p><span class="info-label">Status:</span> <span class="veiculo-status status-desligado">Desligado</span></p>
+                    <p><span class="info-label">Velocidade:</span> <span class="veiculo-velocidade">0</span> km/h</p>
+                    <p><span class="info-label">Placa:</span> <span class="veiculo-placa">-</span></p>
+                    <p><span class="info-label">Ano:</span> <span class="veiculo-ano">-</span></p>
+                    <p class="veiculo-info-extra"></p> <!-- Para infos extras (Turbo, Carga) -->
+                    <p class="veiculo-cnh-info"></p> <!-- Para info da CNH -->
+                    <!-- Componente visual do velocímetro -->
+                    <div class="velocimetro" aria-label="Velocímetro"><div class="veiculo-ponteiro ponteiro"></div></div>
+                    <!-- Barra de progresso para aceleração/carga -->
+                    <div class="barra-aceleracao" aria-label="Barra de aceleração"><div class="veiculo-barra-progresso barra-progresso"></div></div>
+                    <!-- Botão para excluir o veículo -->
+                    <button class="btn-excluir-veiculo" data-acao="excluir"><i class="fa-solid fa-trash-can"></i> Excluir Veículo</button>
+                </div>
+            </div> <!-- Fim .card-info-basica -->
+
+            <!-- Card de Edição: Formulário para editar os detalhes do veículo -->
+            <div class="edicao-veiculo glass-card">
+                <h3><i class="fa-solid fa-pencil"></i> Editar Detalhes</h3>
+                <!-- Campos do formulário de edição (semelhantes aos de adicionar) -->
+                <label for="edit-modelo-veiculo">Modelo:</label> <input type="text" id="edit-modelo-veiculo" class="edit-modelo-veiculo">
+                <label for="edit-cor-veiculo">Cor:</label> <input type="text" id="edit-cor-veiculo" class="edit-cor-veiculo">
+                <label for="edit-placa-veiculo">Placa:</label> <input type="text" id="edit-placa-veiculo" class="edit-placa-veiculo" pattern="[A-Za-z]{3}[0-9][A-Za-z0-9][0-9]{2}|[A-Za-z]{3}[0-9]{4}" title="Formato antigo (AAA1234) ou Mercosul (AAA1B23)">
+                <label for="edit-ano-veiculo">Ano:</label> <input type="number" id="edit-ano-veiculo" class="edit-ano-veiculo" min="1900" max="2100">
+                <label for="edit-cnh-veiculo">Venc. CNH:</label> <input type="date" id="edit-cnh-veiculo" class="edit-cnh-veiculo">
+                <label for="edit-imagem-input">Nova Imagem (Opcional):</label>
+                <input type="file" id="edit-imagem-input" class="edit-imagem-input" accept="image/*">
+                <div class="imagem-preview-container">
+                    <img class="imagem-preview edit-imagem-preview" src="#" alt="Prévia da nova imagem">
+                    <small>Prévia da nova imagem. Se não escolher, mantém a atual.</small>
+                    <small class="warning-text"><i class="fa-solid fa-triangle-exclamation"></i> Imagens muito grandes podem falhar.</small>
+                </div>
+                <!-- Botão para salvar as alterações -->
+                <button class="salvar-veiculo-btn" data-acao="salvar-edicao"><i class="fa-solid fa-save"></i> Salvar Alterações</button>
+            </div> <!-- Fim .edicao-veiculo -->
+        </div> <!-- Fim .coluna-imagem-info -->
+
+        <!-- Coluna da Direita: Contém botões de ação, agendamento e histórico -->
+        <div class="coluna-acoes-manutencao">
+            <!-- Card de Ações: Botões para interagir com o veículo (Ligar, Acelerar, etc.) -->
+            <div class="acoes-veiculo glass-card">
+                <h3><i class="fa-solid fa-gamepad"></i> Painel de Controle</h3>
+                <!-- Botões de ação com data-attributes para identificação no JS -->
+                <button data-acao="ligar"><i class="fa-solid fa-power-off"></i> Ligar</button>
+                <button data-acao="acelerar"><i class="fa-solid fa-gas-pump"></i> Acelerar</button>
+                <button data-acao="frear"><i class="fa-solid fa-hand-paper"></i> Frear</button>
+                <button data-acao="buzinar"><i class="fa-solid fa-bullhorn"></i> Buzinar</button>
+                <span class="acao-extra"></span> <!-- Placeholder para botões específicos (Turbo, Carga) -->
+                <button data-acao="desligar"><i class="fa-solid fa-plug-circle-xmark"></i> Desligar</button>
+            </div> <!-- Fim .acoes-veiculo -->
+
+            <!-- Card de Agendamento: Formulário para agendar manutenção para este veículo -->
+            <div class="agendamento-section glass-card">
+                <h4><i class="fa-solid fa-wrench"></i> Agendar Manutenção</h4>
+                <form class="form-agendamento">
+                    <!-- Campos do formulário de agendamento -->
+                    <label for="agendamento-data">Data:*</label><input type="date" id="agendamento-data" class="agendamento-data" required>
+                    <label for="agendamento-hora">Hora:</label><input type="time" id="agendamento-hora" class="agendamento-hora">
+                    <label for="agendamento-tipo">Tipo de Serviço:*</label><input type="text" id="agendamento-tipo" class="agendamento-tipo" required placeholder="Ex: Revisão completa">
+                    <label for="agendamento-custo">Custo Estimado (R$):</label><input type="number" id="agendamento-custo" class="agendamento-custo" step="0.01" min="0" placeholder="Ex: 550.00">
+                    <label for="agendamento-obs">Observações:</label><textarea id="agendamento-obs" class="agendamento-obs" placeholder="Detalhes: verificar freios, alinhamento..."></textarea>
+                    <!-- Botão para submeter o agendamento -->
+                    <button type="submit" class="agendar-manutencao-btn"><i class="fa-solid fa-calendar-plus"></i> Agendar Serviço</button>
+                </form>
+            </div> <!-- Fim .agendamento-section -->
+
+            <!-- Card de Histórico: Exibe o histórico de manutenções deste veículo -->
+            <div class="historico-section glass-card">
+                <!-- Título e botão para limpar o histórico -->
+                <h4><i class="fa-solid fa-book-medical"></i> Histórico de Manutenções <button class="btn-limpar-historico" title="Limpar Histórico"><i class="fa-solid fa-eraser"></i> Limpar</button></h4>
+                <!-- Container onde a lista de histórico será exibida pelo JS -->
+                <div class="lista-historico"><p>Nenhum registro encontrado.</p></div>
+            </div> <!-- Fim .historico-section -->
+        </div> <!-- Fim .coluna-acoes-manutencao -->
+
+    </div> <!-- Fim .veiculo-renderizado -->
+</template> <!-- Fim #veiculo-template -->
+
+<!-- ========================== -->
+<!-- === Scripts JavaScript === -->
+<!-- ========================== -->
+<!-- Inclusão dos arquivos JavaScript que controlam a lógica da aplicação -->
+<script src="JSS/carro.js"></script>           <!-- Lógica base de Carro -->
+<script src="JSS/carroesportivo.js"></script> <!-- Lógica específica de Carro Esportivo -->
+<script src="JSS/caminhao.js"></script>       <!-- Lógica específica de Caminhão -->
+<script src="JSS/manutencao.js"></script>     <!-- Lógica de Manutenção/Agendamento -->
+<script src="JSS/garagem.js"></script>         <!-- Script principal (orquestra a interface, eventos, etc.) -->
+
+</body>
+</html>
